@@ -1,0 +1,32 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.pdb
+*.exe
+
+# IDE
+.vs/
+.idea/
+.vscode/
+
+# 生产配置（含敏感信息）
+appsettings.Production.json
+
+# Node
+node_modules/
+dist/
+
+# 发布产物
+publish/
+
+# 系统文件
+Thumbs.db
+.DS_Store
+
+# 压缩包
+*.tar.gz
+*.zip

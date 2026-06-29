@@ -1,0 +1,6 @@
+@WPEnglish_HostAddress = http://localhost:5258
+
+GET {{WPEnglish_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
