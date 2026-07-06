@@ -47,14 +47,19 @@ namespace Listening.Admin.WebApi.CategoryController
 			var result = await addValidator.ValidateAsync(categoryAddRequest);
 			if (!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
 
-			Category category = await listeningService.AddCategoryAsync(categoryAddRequest.Title, categoryAddRequest.CoverUrl);
-			listengingDbContext.Add(category);
+			var domainResult = await listeningService.AddCategoryAsync(categoryAddRequest.Title, categoryAddRequest.CoverUrl);
+			if (!domainResult.Success)
+			{
+				return StatusCode(domainResult.StatusCode,domainResult.Message);
+			}
+			listengingDbContext.Add(domainResult.Data);
 			await listengingDbContext.SaveChangesAsync();
-			logger.LogInformation("分类添加成功：{CategoryId}，标题：{Title}", category.Id, categoryAddRequest.Title);
-			return category.Id;
+			logger.LogInformation("分类添加成功：{CategoryId}，标题：{Title}", domainResult.Data.Id, domainResult.Data.Title);
+			return Ok();
 		}
 
 		[HttpPut]
@@ -63,15 +68,14 @@ namespace Listening.Admin.WebApi.CategoryController
 			var result = await updateValidator.ValidateAsync(categoryUpdateRequest);
 			if (!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
-			var category = await listeningRepository.GetCategoryByIdAsync(categoryUpdateRequest.Id);
-			if (category == null)
+			var domainResult = await listeningService.UpdateCategoryAsync(categoryUpdateRequest.Id, categoryUpdateRequest.Title, categoryUpdateRequest.CoverUrl);
+			if (!domainResult.Success)
 			{
-				return NotFound("id不存在");
+				return StatusCode(domainResult.StatusCode, domainResult.Message);
 			}
-			category.ChangeTitle(categoryUpdateRequest.Title).ChangeCoverUrl(categoryUpdateRequest.CoverUrl);
-			category.NotifyModified();
 			await listengingDbContext.SaveChangesAsync();
 			logger.LogInformation("分类更新成功：{CategoryId}", categoryUpdateRequest.Id);
 			return Ok();
@@ -80,12 +84,11 @@ namespace Listening.Admin.WebApi.CategoryController
 		[HttpDelete]
 		public async Task<ActionResult> Delete(Guid id)
 		{
-			Category? category = await listeningRepository.GetCategoryByIdAsync(id);
-			if (category == null)
+			var domainResult = await listeningService.DeleteCategoryAsync(id);
+			if (!domainResult.Success)
 			{
-				return NotFound("id不存在");
+				return StatusCode(domainResult.StatusCode, domainResult.Message);
 			}
-			category.SoftDelete();
 			await listengingDbContext.SaveChangesAsync();
 			logger.LogWarning("分类已软删除：{CategoryId}", id);
 			return Ok();
@@ -106,10 +109,15 @@ namespace Listening.Admin.WebApi.CategoryController
 			var result = await sortValidator.ValidateAsync(sortRequest);
 			if (!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
-
-			await listeningService.SortCategoriesAsync(sortRequest.SortedCategoryIds);
+			
+			var domainResult = await listeningService.SortCategoriesAsync(sortRequest.SortedCategoryIds);
+			if (!domainResult.Success)
+			{
+				return StatusCode(domainResult.StatusCode,domainResult.Message);
+			}
 
 			await listengingDbContext.SaveChangesAsync();
 			logger.LogInformation("分类排序成功");

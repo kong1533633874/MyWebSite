@@ -15,7 +15,9 @@
           <template #default="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
         <el-table-column prop="title" label="标题" />
-        <el-table-column prop="createTime" label="创建时间" width="180" />
+        <el-table-column label="创建时间" width="180">
+          <template #default="scope">{{ formatTime(scope.row.createTime) }}</template>
+        </el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="scope">
             <template v-if="isSorting">
@@ -40,6 +42,7 @@ import { onMounted, reactive, ref } from 'vue'
 import {useRouter} from 'vue-router'
 import { ElMessage } from 'element-plus'
 import ConfirmBox from '@/utils/ConfirmBox';
+import { formatTime } from '@/utils/time';
 
 const state = reactive({
 	tableData:[]

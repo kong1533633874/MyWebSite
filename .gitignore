@@ -30,3 +30,8 @@ Thumbs.db
 # 压缩包
 *.tar.gz
 *.zip
+
+
+.py
+.toml
+.sql

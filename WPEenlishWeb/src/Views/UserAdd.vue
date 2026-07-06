@@ -50,11 +50,32 @@ const validatePasswordConfirm = (rule, value, callback)=>{
     }
 }
 
+const validateUserPasswordLength = (rule, value, callback)=>{
+  if(value.length < 6 || value.length > 20){
+    callback(new Error("密码请输入6位至20位"))
+  }
+  else{
+    callback()
+  }
+}
+
+const validateUserNameLength = (rule, value, callback)=>{
+  if(value.length < 2 || value.length > 20){
+    callback(new Error("用户名请输入2位至20位"))
+  }
+  else{
+    callback()
+  }
+}
+
 const rules = {
-    userName:[{required:true, message:"请输入用户名", trigger:"blur"}],
-    password:[{required:true, message:'请输入密码', trigger:"blur"}],
+    userName:[{required:true, message:"请输入用户名", trigger:"blur"},
+      {validator:validateUserNameLength,trigger:'blur'}],
+    password:[{required:true, message:'请输入密码', trigger:"blur"},
+      {validator:validateUserPasswordLength, trigger: 'blur'}],
     passwordConfirm:[{required:true, message:'请确认密码', trigger:"blur"},
-        {validator:validatePasswordConfirm, trigger: 'blur'}
+      {validator:validatePasswordConfirm, trigger: 'blur'},
+      {validator:validateUserPasswordLength, trigger: 'blur'}
     ]
 }
 

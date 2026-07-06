@@ -10,7 +10,9 @@
     <div class="card">
       <el-table :data="state.tableData" style="width: 100%" stripe>
         <el-table-column prop="userName" label="用户名" />
-        <el-table-column prop="createdTime" label="创建时间" width="180" />
+        <el-table-column label="创建时间" width="180">
+          <template #default="scope">{{ formatTime(scope.row.createdTime) }}</template>
+        </el-table-column>
         <el-table-column label="操作" width="140">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="edit(scope.row)">更改密码</el-button>
@@ -28,6 +30,7 @@ import { ElMessage } from 'element-plus';
 import { onMounted, reactive } from 'vue'
 import {useRouter} from 'vue-router'
 import ConfirmBox from '@/utils/ConfirmBox';
+import { formatTime } from '@/utils/time';
 
 const state = reactive({
 	tableData:[]

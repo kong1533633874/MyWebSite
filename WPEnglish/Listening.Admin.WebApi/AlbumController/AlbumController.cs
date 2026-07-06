@@ -52,7 +52,8 @@ namespace Listening.Admin.WebApi.AlbumController
 			var result = await addValidator.ValidateAsync(albumAddRequest);
 			if (!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
 			var album = await listeningService.AddAlbumAsync(albumAddRequest.Title, albumAddRequest.CategoryId);
 			await listengingDbContext.albums.AddAsync(album);
@@ -67,16 +68,15 @@ namespace Listening.Admin.WebApi.AlbumController
 			var result = await updateValidator.ValidateAsync(albumUpdateRequest);
 			if (!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
 
-			var album = await listeningRepository.GetAlbumByIdAsync(albumUpdateRequest.Id);
-			if (album == null)
+			var domainResult = await listeningService.UpdateAlbumAsync(albumUpdateRequest.Id, albumUpdateRequest.Title);
+			if (!domainResult.Success)
 			{
-				return NotFound($"id:{albumUpdateRequest.Id}Ablum不存在");
+				return StatusCode(domainResult.StatusCode,domainResult.Message);
 			}
-			album.ChangeTitle(albumUpdateRequest.Title);
-			album.NotifyModified();
 			await listengingDbContext.SaveChangesAsync();
 			logger.LogInformation("专辑更新成功：{AlbumId}", albumUpdateRequest.Id);
 			return Ok();
@@ -84,12 +84,11 @@ namespace Listening.Admin.WebApi.AlbumController
 		[HttpDelete]
 		public async Task<ActionResult> Delete(Guid id)
 		{
-			var album = await listeningRepository.GetAlbumByIdAsync(id);
-			if (album == null)
+			var domainResult = await listeningService.DeleteAlbumAsync(id);
+			if (!domainResult.Success)
 			{
-				return NotFound($"id:{id}Ablum不存在");
+				return StatusCode(domainResult.StatusCode,domainResult.Message);
 			}
-			album.SoftDelete();
 			await listengingDbContext.SaveChangesAsync();
 			logger.LogWarning("专辑已软删除：{AlbumId}", id);
 			return Ok();
@@ -100,10 +99,14 @@ namespace Listening.Admin.WebApi.AlbumController
 			var result = sortValidator.Validate(albumSortRequest);
 			if (!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
-			await listeningService.SortAlbumsAsync(albumSortRequest.SortedAlbumIds, albumSortRequest.CategoryId);
-
+			var domainResult = await listeningService.SortAlbumsAsync(albumSortRequest.SortedAlbumIds, albumSortRequest.CategoryId);
+			if (!domainResult.Success)
+			{
+				return StatusCode(domainResult.StatusCode,domainResult.Message);
+			}
 			await listengingDbContext.SaveChangesAsync();
 			logger.LogInformation("专辑排序成功，分类：{CategoryId}", albumSortRequest.CategoryId);
 			return Ok();

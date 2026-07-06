@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace Commons.JsonConverters
 	public class DateTimeJsonConverter : JsonConverter<DateTime>
 	{
 		private readonly string _format;
-		public DateTimeJsonConverter() : this("yyyy-MM-dd HH:mm:ss")
+		public DateTimeJsonConverter() : this("yyyy-MM-ddTHH:mm:ssZ")
 		{
 
 		}
@@ -38,7 +38,6 @@ namespace Commons.JsonConverters
 
 		public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
 		{
-			//固定用服务器所在的时区，前端如果想适应用户的时区，请自己调整
 			writer.WriteStringValue(value.ToString(_format));
 		}
 	}

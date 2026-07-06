@@ -1,6 +1,7 @@
 @Listening.Admin.WebApi_HostAddress = http://localhost:5069
 
-GET {{Listening.Admin.WebApi_HostAddress}}/weatherforecast/
+
+GET {{Listening.Admin.WebApi_HostAddress}}/api/admin/Category/GetAllCategories
 Accept: application/json
 
 ###

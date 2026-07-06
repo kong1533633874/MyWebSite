@@ -1,4 +1,4 @@
-﻿namespace FileService.Entities
+namespace FileService.Entities
 {
 	public class AudioFile
 	{

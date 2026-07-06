@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +11,7 @@ namespace Commons.JsonConverters
 	public class NullableDateTimeJsonConverter : JsonConverter<DateTime?>
 	{
 		private readonly DateTimeJsonConverter _inner;
-		public NullableDateTimeJsonConverter() : this("yyyy-MM-dd HH:mm:ss") { }
+		public NullableDateTimeJsonConverter() : this("yyyy-MM-ddTHH:mm:ssZ") { }
 		public NullableDateTimeJsonConverter(string format) => _inner = new DateTimeJsonConverter(format);
 
 		public override DateTime? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

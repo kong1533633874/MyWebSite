@@ -50,7 +50,7 @@ export default{
             albumId:'',
             title:'',
             audioUrl:'',
-            durationInSecond:'',
+            durationInSecond:0,
             subtitleType:'',
             subtitle:''
         })
@@ -84,7 +84,7 @@ export default{
                   ElMessage.success("添加成功")
                   form.title=''
                   form.audioUrl=''
-                  form.durationInSecond=''
+                  form.durationInSecond=0
                   form.subtitleType=''
                   form.subtitle=''
                   uploaderRef.value.clear()

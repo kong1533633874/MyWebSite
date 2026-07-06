@@ -50,11 +50,23 @@ const validatePasswordConfirm = (rule, value, callback)=>{
     }
 }
 
+const validateUserPasswordLength = (rule, value, callback)=>{
+  if(value.length < 6 || value.length > 20){
+    callback(new Error("密码请输入6位至20位"))
+  }
+  else{
+    callback()
+  }
+}
+
 const rules = {
     oldPassword:[{required:true, message:"请输入旧密码", trigger:"blur"}],
-    newPassword:[{required:true, message:'请输入新密码', trigger:"blur"}],
+    newPassword:[{required:true, message:'请输入新密码', trigger:"blur"},
+      {validator:validateUserPasswordLength,trigger:'blur'}
+    ],
     passwordConfirm:[{required:true, message:'请确认密码', trigger:"blur"},
-        {validator:validatePasswordConfirm, trigger: 'blur'}
+        {validator:validatePasswordConfirm, trigger: 'blur'},
+        {validator:validateUserPasswordLength,trigger:'blur'}
     ]
 }
 

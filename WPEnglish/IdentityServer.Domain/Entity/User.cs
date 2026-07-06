@@ -1,4 +1,4 @@
-﻿using DomainCommons.Models;
+using DomainCommons.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

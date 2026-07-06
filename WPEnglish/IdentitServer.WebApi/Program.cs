@@ -56,7 +56,7 @@ namespace IdentitServer.WebApi
 			//datatime
 			builder.Services.Configure<JsonOptions>(options =>
 			{
-				options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter("yyyy-MM-dd HH:mm:ss"));
+				options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter("yyyy-MM-ddTHH:mm:ssZ"));
 			});
 
 			builder.Services.AddAuthorization();

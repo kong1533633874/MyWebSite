@@ -60,7 +60,8 @@ namespace Listening.Admin.WebApi.EpisodeController
 			var result = await addValidator.ValidateAsync(episodeAddRequest);
 			if(!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
 			var episode = await listeningService.AddEpisodeAsync(episodeAddRequest.Title,
 				episodeAddRequest.SubtitleType,
@@ -80,17 +81,15 @@ namespace Listening.Admin.WebApi.EpisodeController
 			var result = await updateValidator.ValidateAsync(episodeUpdateRequest);
 			if (!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
 
-			var episode = await repository.GetEpisodeByIdAsync(episodeUpdateRequest.Id);
-			if (episode == null)
+			var domainResult = await listeningService.UpdateEpisodeAsync(episodeUpdateRequest.Id, episodeUpdateRequest.Title, episodeUpdateRequest.SubtitleType, episodeUpdateRequest.Subtitle);
+			if(!domainResult.Success)
 			{
-				return NotFound($"没有Id={episodeUpdateRequest.Id}的Episode");
+				return StatusCode(domainResult.StatusCode,domainResult.Message);
 			}
-			episode.ChangeTitle(episodeUpdateRequest.Title);
-			episode.ChangeSubtitle(episodeUpdateRequest.SubtitleType,episodeUpdateRequest.Subtitle);
-			episode.NotifyModified();
 			await db.SaveChangesAsync();
 			logger.LogInformation("剧集更新成功：{EpisodeId}", episodeUpdateRequest.Id);
 			return Ok();
@@ -99,12 +98,11 @@ namespace Listening.Admin.WebApi.EpisodeController
 		[HttpDelete]
 		public async Task<ActionResult> Delete(Guid id)
 		{
-			var episode = await repository.GetEpisodeByIdAsync(id);
-			if (episode == null)
+			var domainResult = await listeningService.DeleteEpisodeAsync(id);
+			if (!domainResult.Success)
 			{
-				return NotFound($"没有Id={id}的Episode");
+				return StatusCode(domainResult.StatusCode,domainResult.Message);
 			}
-			episode.SoftDelete();
 			await db.SaveChangesAsync();
 			logger.LogWarning("剧集已软删除：{EpisodeId}", id);
 			return Ok();
@@ -115,9 +113,14 @@ namespace Listening.Admin.WebApi.EpisodeController
 			var result = await sortedValidator.ValidateAsync(episodeSortRequest);
 			if (!result.IsValid)
 			{
-				return BadRequest(result.Errors);
+				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
+				return BadRequest(errors);
 			}
-			await listeningService.SortEpisodesAsync(episodeSortRequest.SortedAlbumsIds, episodeSortRequest.AlbumId);
+			var domainResult = await listeningService.SortEpisodesAsync(episodeSortRequest.SortedAlbumsIds, episodeSortRequest.AlbumId);
+			if (!domainResult.Success)
+			{
+				return StatusCode(domainResult.StatusCode,domainResult.Message);
+			}
 			await db.SaveChangesAsync();
 			logger.LogInformation("剧集排序成功，专辑：{AlbumId}", episodeSortRequest.AlbumId);
 			return Ok();
