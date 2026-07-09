@@ -32,6 +32,9 @@ Thumbs.db
 *.zip
 
 
-.py
-.toml
-.sql
+*.py
+*.toml
+*.sql
+.reasonix/
+lrc/
+mp3/

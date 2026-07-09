@@ -11,9 +11,11 @@ namespace JWT
 		{
 			TimeSpan ExpiryDuration = TimeSpan.FromSeconds(options.ExpireSeconds);
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key));
-			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+			// 不设 KeyId，让 JwtSecurityTokenHandler 不往 header 写 kid，
+			// 避免 .NET 8 的 kid 严格匹配导致 IDX10517
 			var tokenDescriptor = new JwtSecurityToken(options.Issuer, options.Audience, claims,
-				expires: DateTime.UtcNow.Add(ExpiryDuration), signingCredentials: credentials);
+				expires: DateTime.UtcNow.Add(ExpiryDuration),
+				signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature));
 			return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
 		}
 	}

@@ -49,11 +49,15 @@ export default{
 
             // 计算音频时长
             const audio = new Audio()
-            audio.src = URL.createObjectURL(file)
+            const blobUrl = URL.createObjectURL(file)
+            audio.src = blobUrl
             audio.addEventListener('loadedmetadata', () => {
                 const duration = Math.round(audio.duration * 100) / 100
                 emit('duration-event', duration)
-                URL.revokeObjectURL(audio.src)
+                // 先清除 src 让 Audio 停止读取，再释放 blob URL
+                audio.removeAttribute('src')
+                audio.load()
+                URL.revokeObjectURL(blobUrl)
             })
         }
 

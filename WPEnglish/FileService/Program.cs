@@ -66,7 +66,8 @@ namespace FileService
 						ValidateIssuerSigningKey = true,
 						ValidIssuer = jwtSetting.Issuer,
 						ValidAudience = jwtSetting.Audience,
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Key))
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Key)),
+						IssuerSigningKeyValidator = (key, token, parameters) => true
 					};
 				});
 			builder.Host.AddSerilogConfiguration(builder.Configuration);

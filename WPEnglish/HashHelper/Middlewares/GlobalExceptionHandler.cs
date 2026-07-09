@@ -46,7 +46,7 @@ namespace Commons.Middlewares
 			{
 				NotFoundException ex => (HttpStatusCode.NotFound, ex.Message),
 				BusinessException ex => (HttpStatusCode.BadRequest, ex.Message),
-				UnauthorizedAccessException ex => (HttpStatusCode.Unauthorized, ex.Message),
+				UnauthorizedAccessException ex => (HttpStatusCode.Forbidden, ex.Message),
 				ArgumentException ex => (HttpStatusCode.BadRequest, ex.Message),
 				_ => (HttpStatusCode.InternalServerError, "服务器内部错误，请稍后重试")
 			};

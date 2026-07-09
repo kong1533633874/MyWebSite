@@ -51,8 +51,6 @@ WPEnglishWebSite/
 │   ├── JWT                    # JWT 令牌生成与验证
 │   ├── DomainCommons          # 领域通用基类
 │   └── Infrastructure         # 通用基础设施
-├── lrc/                       # LRC 字幕/歌词文件
-├── mp3/                       # 英语听力音频文件
 └── publish/                   # 发布产物
 ```
 
