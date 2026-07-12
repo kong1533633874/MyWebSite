@@ -1,161 +1,137 @@
-# WPEnglishWebSite - 英语学习网站
+# WPEnglish — 英语听力学习平台
 
-一个基于 **Vue 3 + .NET** 的英语听力学习平台，支持音频播放、文章管理、分类管理、专辑管理、用户管理等功能。
+一个基于 **Vue 3 + .NET 8** 的前后端分离英语听力学习平台，涵盖分类浏览、音频播放、LRC/SRT 字幕同步、后台内容管理、用户认证授权等完整功能。
+
+> 🌐 在线体验：[https://www.zxhyq.site/](https://www.zxhyq.site/)
+
+---
 
 ## 🚀 技术栈
 
-| 层级 | 技术 |
+### 前端
+
+| 技术 | 说明 |
 |------|------|
-| **前端** | Vue 3 + Vite 8 + Element Plus + Vue Router + Axios |
-| **后端** | .NET (C#) - 多层架构 (DDD) |
-| **认证** | IdentityServer4 + JWT |
-| **数据库** | SQL Server / MySQL |
-| **日志** | Serilog |
-| **API 文档** | RESTful + HTTP |
+| **Vue 3** (Composition API) | 渐进式前端框架 |
+| **Vite 8** | 极速构建与热更新 |
+| **Element Plus** | 企业级 UI 组件库 |
+| **Vue Router 5** | 路由管理 + 鉴权守卫 |
+| **Axios** | HTTP 客户端，自动携带 JWT Token |
+| **marked** | Markdown 内容渲染 |
 
-## 📁 项目结构
+### 后端
 
-```
-WPEnglishWebSite/
-├── WPEenlishWeb/              # Vue 3 前端项目
-│   └── src/
-│       ├── Views/             # 页面组件
-│       │   ├── AlbumList.vue  # 专辑列表
-│       │   ├── AlbumAdd.vue   # 添加专辑
-│       │   ├── AlbumUpdate.vue# 编辑专辑
-│       │   ├── CategoryList.vue# 分类列表
-│       │   ├── CategoryAdd.vue # 添加分类
-│       │   ├── CategoryUpdate.vue# 编辑分类
-│       │   ├── EpisodeList.vue # 剧集列表
-│       │   ├── EpisodeAdd.vue  # 添加剧集
-│       │   ├── EpisodeUpdate.vue# 编辑剧集
-│       │   ├── UserList.vue    # 用户列表
-│       │   ├── UserAdd.vue     # 添加用户
-│       │   ├── UserUpdate.vue  # 编辑用户
-│       │   └── Login.vue       # 登录页面
-│       ├── data/
-│       │   └── post.js         # Axios API 接口封装
-│       └── utils/
-│           └── time.js         # 时间工具函数
-├── WPEnglish/                 # .NET 后端解决方案 (.sln)
-│   ├── Listening.Admin.WebApi # 后台管理 API 控制器
-│   ├── IdentitServer.WebApi   # 认证授权服务
-│   ├── Listening.Domain       # 领域层（实体、服务接口）
-│   ├── IdentityServer.Domain  # 认证领域模型
-│   ├── FileService            # 文件上传下载服务
-│   ├── FileService.Domain     # 文件服务领域层
-│   ├── FileService.Infrastructure # 文件服务基础设施
-│   ├── IdentityServer.Infrastructure # 认证基础设施
-│   ├── Listening.Infrastructure    # 听力数据基础设施
-│   ├── HashHelper             # 通用工具类（异常处理、JSON 转换等）
-│   ├── JWT                    # JWT 令牌生成与验证
-│   ├── DomainCommons          # 领域通用基类
-│   └── Infrastructure         # 通用基础设施
-└── publish/                   # 发布产物
-```
+| 技术 | 说明 |
+|------|------|
+| **.NET 8** | ASP.NET Core Web API |
+| **Entity Framework Core** | ORM 数据持久化（SQL Server） |
+| **ASP.NET Core Identity** | 用户与角色管理 |
+| **JWT**（HMAC-SHA256） | 自定义 Token 签发与验证 |
+| **FluentValidation** | 声明式参数验证 |
+| **Serilog** | 结构化日志（异步文件 + 控制台） |
+| **Swagger / OpenAPI** | API 文档自动生成 |
+
+### 架构设计
+
+- **DDD 分层架构** — Domain（实体、领域服务）/ Infrastructure（EF Core 仓储）/ WebApi（控制器、中间件）/ Commons（通用基类、工具库）
+- **CQRS 风格** — 查询与命令分离，公共 API 走缓存，管理 API 走数据库
+- **微服务拆分** — 主业务 API、管理后台 API、身份认证服务、文件服务四个独立项目
+- **全局异常处理** — `GlobalExceptionHandler` 中间件统一捕获
+- **API 统一响应** — `ApiResponseFilter` 自动包装为 `{ success, data, message, statusCode }` 格式
+
+---
 
 ## ✨ 功能特性
 
-- 🎧 **英语听力学习** - 支持音频播放与 LRC 同步字幕
-- 📚 **内容管理** - 专辑（Album）、分类（Category）、剧集（Episode）完整 CRUD
-- 👥 **用户管理** - 后台用户增删改查
-- 🔐 **身份认证** - JWT + IdentityServer4 授权
-- 📝 **文章发布** - 支持 Markdown 格式内容
+### 🎧 英语听力学习
 
-## 🛠️ 本地开发
+- **音频播放** — 支持播放 / 暂停 / 进度拖拽
+- **LRC / SRT 字幕同步** — 播放时字幕实时高亮滚动
+- **字幕切换** — 一键显示 / 隐藏字幕
+- **点击收藏** — 点击当前字幕可收藏句子
+- **字幕回顾** — 收藏列表支持点击跳转到对应时间点
+- **🤖 AI 生成字幕** — 集成腾讯云语音识别，上传音频自动生成 SRT/LRC 字幕
 
-### 前置要求
+### 🌐 公开浏览
 
-- Node.js >= 20
-- .NET SDK 8.0+
-- SQL Server（或 MySQL）
+- **分类 → 专辑 → 剧集** 三级导航浏览
+- **音频播放页** — 从剧集列表直接进入播放
+- **技术博客** — 10 篇 .NET / Vue 技术文章（Markdown 渲染）
+- **资源导航** — 精选开发资源分类展示与搜索
 
-### 前端启动
+### 📚 内容管理（管理员）
 
-```bash
-cd WPEenlishWeb
-npm install
-npm run dev
+- **分类管理** — 增删改查 + 拖拽排序
+- **专辑管理** — 按分类归属 + 排序
+- **剧集管理** — 音频上传 + 字幕编辑 + 排序 + 可见性控制
+- **文件上传** — 独立文件服务支持音频、字幕文件
+
+### 👥 用户管理
+
+- 后台用户增删改查
+- JWT 登录认证 + 角色授权
+
+---
+
+## 🏗️ 项目结构
+
+```
+WPEnglishWebSite/
+├── WPEenlishWeb/                   # Vue 3 前端
+│   └── src/
+│       ├── Views/                  # 管理后台页面
+│       ├── SightseerViews/         # 游客浏览页面
+│       ├── components/             # 公共组件（Uploader）
+│       ├── data/                   # 静态数据（文章、资源）
+│       ├── route/                  # 路由配置 + 鉴权守卫
+│       └── utils/                  # Axios 封装、工具函数
+├── WPEnglish/                      # .NET 后端解决方案
+│   ├── WPEnglish/                  # 主业务 API（公开查询）
+│   ├── Listening.Admin.WebApi/     # 管理后台 API
+│   ├── IdentitServer.WebApi/       # 身份认证服务
+│   ├── FileService/                # 文件上传下载服务
+│   ├── Listening.Domain/           # 领域实体与接口
+│   ├── Listening.Infrastructure/   # EF Core 仓储实现
+│   ├── IdentityServer.Domain/      # 认证领域模型
+│   ├── IdentityServer.Infrastructure/ # 认证数据层
+│   ├── FileService.Domain/         # 文件服务领域层
+│   ├── FileService.Infrastructure/ # 文件服务数据层
+│   ├── JWT/                        # 独立 JWT 鉴权库
+│   ├── HashHelper (Commons)/       # 通用工具（异常处理、过滤、JSON 转换）
+│   ├── CommonInitializer/          # Serilog、CORS 等共享配置
+│   └── DomainCommons/              # 领域通用基类（软删除、统一返回）
+└── README.md
 ```
 
-前端默认运行在 `http://localhost:5173`。
+---
 
-### 后端启动
+## 🧩 关键设计
 
-```bash
-# 使用 Visual Studio 或 JetBrains Rider 打开 WPEnglish/WPEnglish.sln
-# 或使用 dotnet CLI：
-cd WPEnglish
-dotnet restore
-dotnet run --project Listening.Admin.WebApi
+| 设计模式 | 实现 | 说明 |
+|---------|------|------|
+| 领域驱动设计 | Domain / Infrastructure / WebApi 分层 | 业务逻辑与基础设施解耦 |
+| 仓储模式 | `IListeningRepository` → `ListeningRepository` | 抽象数据访问层 |
+| 工厂模式 | `SubtitleParserFactory` → `LrcParser` / `SrtParser` | 支持双格式字幕解析 |
+| Builder 模式 | `Episode.Builder` | 领域对象构建与校验 |
+| 过滤器 | `ApiResponseFilter` | 统一 API 响应格式 |
+| 中间件 | `GlobalExceptionHandler` | 全局异常统一处理 |
+| 策略模式 | `IStorageClient` → `SMBStorageClient` | 文件存储可切换 |
+
+---
+
+## 🔐 认证流程
+
+```
+用户登录 → IdentitServer.WebApi 验证用户名密码
+         → JWT 模块签发 Token（HMAC-SHA256）
+         → 前端存储到 localStorage
+         → Axios 拦截器自动携带 Authorization Header
+         → 后端 JWT Bearer 中间件验证
+         → Vue Router 守卫检测 Token 控制页面访问
 ```
 
-后端 API 默认运行在 `http://localhost:5000`。
+---
 
-### 数据库配置
+## 🤝 贡献与许可
 
-在 `appsettings.json` 中配置数据库连接字符串：
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=WPEnglish;Trusted_Connection=True;"
-  }
-}
-```
-
-首次运行前需执行 Entity Framework 迁移：
-
-```bash
-dotnet ef database update
-```
-
-## 🏗️ 架构说明
-
-项目采用 **领域驱动设计（DDD）** 分层架构：
-
-- **Domain 层** - 定义实体、值对象、领域服务接口，不依赖基础设施
-- **Application 层** - 应用服务、DTO、接口实现
-- **Infrastructure 层** - 数据持久化（EF Core）、仓储实现
-- **WebApi 层** - 控制器、中间件、过滤器
-
-### 关键设计
-
-- ✅ **全局异常处理** - `GlobalExceptionHandler` 中间件统一处理异常
-- ✅ **API 响应封装** - `ApiResponse` 统一返回格式
-- ✅ **FluentValidation** - 请求参数验证
-- ✅ **AutoMapper** - 实体与 DTO 映射
-- ✅ **JWT 认证** - IdentityServer4 集成
-
-## 🌐 部署
-
-### 前端构建
-
-```bash
-cd WPEenlishWeb
-npm run build
-# 构建产物在 dist/ 目录
-```
-
-### 后端发布
-
-```bash
-cd WPEnglish
-dotnet publish -c Release -o ../publish
-```
-
-可将前后端部署至 IIS、Nginx 或 Docker 容器。
-
-## 🤝 贡献
-
-欢迎提交 Issue 或 Pull Request！
-
-1. Fork 本项目
-2. 创建功能分支 (`git checkout -b feature/your-feature`)
-3. 提交更改 (`git commit -m 'Add some feature'`)
-4. 推送到分支 (`git push origin feature/your-feature`)
-5. 创建 Pull Request
-
-## 📄 许可证
-
-MIT
+MIT License — 欢迎 Issue 和 Pull Request。

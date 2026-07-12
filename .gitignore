@@ -15,6 +15,7 @@ obj/
 
 # 生产配置（含敏感信息）
 appsettings.Production.json
+appsettings.Development.json
 
 # Node
 node_modules/

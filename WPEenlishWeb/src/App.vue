@@ -20,6 +20,8 @@
   <main class="main-content">
     <RouterView />
   </main>
+
+  <SiteFooter />
 </template>
 
 <script setup lang="js">
@@ -29,6 +31,7 @@ import { provide, reactive } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 import { useRouter } from 'vue-router';
 import ConfirmBox from './utils/ConfirmBox';
+import SiteFooter from './components/SiteFooter.vue';
 
 const router = useRouter()
 

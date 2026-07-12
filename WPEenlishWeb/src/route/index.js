@@ -20,6 +20,7 @@ import AudioPlayer from "@/SightseerViews/AudioPlayer.vue";
 import BlogList from "@/SightseerViews/ResourceSites/BlogList.vue"
 import Resources from "@/SightseerViews/ResourceSites/Resources.vue";
 import PostDetail from "@/SightseerViews/ResourceSites/PostDetail.vue";
+import InfoPage from "@/SightseerViews/InfoPage.vue";
 
 const paths = [
     { path: "/", redirect: "/category" },
@@ -117,7 +118,17 @@ const paths = [
     {
         path:"/resources",
         component:Resources
-    }
+    },
+    // ===== 信息页面 =====
+    {
+        path:"/info",
+        component:InfoPage
+    },
+    // 旧路径重定向
+    { path:"/about", redirect:"/info#about" },
+    { path:"/contact", redirect:"/info#contact" },
+    { path:"/disclaimer", redirect:"/info#legal" },
+    { path:"/privacy", redirect:"/info#legal" }
 ]
 const router = createRouter({
     history:createWebHistory(),

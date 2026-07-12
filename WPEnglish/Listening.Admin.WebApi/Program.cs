@@ -22,6 +22,12 @@ namespace Listening.Admin.WebApi
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
+			// 允许上传大文件（AI 字幕生成时需要）
+			builder.WebHost.ConfigureKestrel(options =>
+			{
+				options.Limits.MaxRequestBodySize = 100_000_000; // 100MB
+			});
+
 			// Add services to the container.
 
 			builder.Services.AddControllers(option =>
