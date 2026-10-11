@@ -8,14 +8,14 @@ obj/
 *.pdb
 *.exe
 
+# 生产配置
+appsettings.Production.json
+appsettings.Development.json
+
 # IDE
 .vs/
 .idea/
 .vscode/
-
-# 生产配置（含敏感信息）
-appsettings.Production.json
-appsettings.Development.json
 
 # Node
 node_modules/

@@ -37,7 +37,7 @@
 - **CQRS 风格** — 查询与命令分离，公共 API 走缓存，管理 API 走数据库
 - **微服务拆分** — 主业务 API、管理后台 API、身份认证服务、文件服务四个独立项目
 - **全局异常处理** — `GlobalExceptionHandler` 中间件统一捕获
-- **API 统一响应** — `ApiResponseFilter` 自动包装为 `{ success, data, message, statusCode }` 格式
+- **API 统一响应** — `ApiResponseFilter` 自动包装为 `{ success, data, message, statusCode }`  格式
 
 ---
 
