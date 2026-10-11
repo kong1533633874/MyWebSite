@@ -22,25 +22,25 @@ namespace FileService.Domain.Service
 			this._logger = logger;
 		}
 
-		public async Task<AudioFile> UploadAsync(string fileName,Stream content)
+		public async Task<(AudioFile,bool)> UploadAsync(string fileName,Stream content)
 		{
 			string hash = HashHelper.ComputeSha256Hash(content);
 			long fileSize = content.Length;
 
-			DateTime today = DateTime.Today;
-			string path = $"{today.Year}/{today.Month}/{today.Day}/{hash}/{fileName}";
-
-			var oldAudioFile = await _fSRepository.FindFileAsync(fileSize,hash);
+			var oldAudioFile = await _fSRepository.FindFileAsync(fileSize, hash);
 			if (oldAudioFile != null)
 			{
 				_logger.LogInformation("文件已存在，跳过上传：{FileName}，大小：{FileSize}", fileName, fileSize);
-				return oldAudioFile;
+				return (oldAudioFile,true);
 			}
+
+			DateTime today = DateTime.Today;
+			string path = $"{today.Year}/{today.Month}/{today.Day}/{hash}/{fileName}";
+
 			content.Position = 0;
 			Uri url = await _storageClient.SaveAsync(path, content);
-			Guid guid = Guid.NewGuid();
 			_logger.LogInformation("文件上传成功：{FileName}，大小：{FileSize}，路径：{Path}", fileName, fileSize, path);
-			return AudioFile.Create(guid, fileSize, fileName, hash,url);
+			return (AudioFile.Create(Guid.NewGuid(), fileSize, fileName, hash,url),false);
 		}
 	}
 }

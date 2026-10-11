@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FileService.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class WPEnglishDemo1 : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,11 +16,11 @@ namespace FileService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreateDatetime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FileSize = table.Column<long>(type: "bigint", nullable: false),
                     FileName = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileSHA256Hash = table.Column<string>(type: "varchar(64)", unicode: false, maxLength: 64, nullable: false)
+                    FileSize = table.Column<long>(type: "bigint", nullable: false),
+                    FileSHA256Hash = table.Column<string>(type: "varchar(64)", unicode: false, maxLength: 64, nullable: false),
+                    CreateDatetime = table.Column<DateTime>(type: "datetime2(0)", nullable: false)
                 },
                 constraints: table =>
                 {

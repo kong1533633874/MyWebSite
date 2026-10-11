@@ -1,4 +1,3 @@
-
 using CommonInitializer;
 using JWT;
 using Listening.Domain.Service;
@@ -73,8 +72,9 @@ namespace WPEnglish
 						IssuerSigningKeyValidator = (key, token, parameters) => true
 					};
 				});
-			//
+			//log
 			builder.Host.AddSerilogConfiguration(builder.Configuration);
+
 			var app = builder.Build();
 
             // Configure the HTTP request pipeline.

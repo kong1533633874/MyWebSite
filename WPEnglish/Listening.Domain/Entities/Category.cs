@@ -12,14 +12,14 @@ namespace Listening.Domain.Entities
 		public Guid Id { get; private set; }
 		public int SequenceNumber { get; private set; }
 		public string Title { get; private set; }
-		public Uri CoverUrl { get; private set; }
+		public Uri? CoverUrl { get; private set; }
 		//commons
 		public bool IsDeleted { get; private set; }
 		public DateTime CreateTime { get; private set; }
 		public DateTime? DeletionTime { get; private set; }
 		public DateTime? LastModificationTime { get; private set; }
 
-		public static Category Create(int sequenceNumber,string title,Uri coverUrl)
+		public static Category Create(int sequenceNumber,string title,Uri? coverUrl)
 		{
 			Category category = new Category()
 			{
@@ -59,6 +59,5 @@ namespace Listening.Domain.Entities
 		{
 			this.LastModificationTime = DateTime.UtcNow;
 		}
-
 	}
 }

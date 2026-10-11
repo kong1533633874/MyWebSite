@@ -8,8 +8,11 @@
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入分类标题" />
         </el-form-item>
-        <el-form-item label="封面URL" prop="path">
-          <el-input v-model="form.path" placeholder="请输入封面路径" />
+        <el-form-item label="封面" prop="coverUrl">
+          <div class="upload-row">
+            <el-input v-model="form.coverUrl" disabled placeholder="不上传则保留原封面" />
+            <ImageUploader @custom-event="handleCoverUrl" />
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="update">提交</el-button>
@@ -26,21 +29,27 @@ import { useRouter } from 'vue-router';
 import request from '@/utils/request';
 import { ElMessage } from 'element-plus';
 import ConfirmBox from '@/utils/ConfirmBox';
+import ImageUploader from '@/components/ImageUploader.vue';
 
 export default{
+  components:{ImageUploader},
     setup(){
       const router = useRouter()
       const form = reactive({
         title:'',
-        path:''
+        coverUrl:''
       })
       const formRef = ref()
 
       form.title = router.currentRoute.value.query.title
-      form.path = router.currentRoute.value.query.coverUrl
+      form.coverUrl = router.currentRoute.value.query.coverUrl || ''
 
       const rules = {
         title:[{required:true,message:"必须填写标题",trigger:"blur"}]
+      }
+
+      function handleCoverUrl(url){
+        form.coverUrl = url
       }
 
       async function update(){
@@ -53,7 +62,7 @@ export default{
               const response = await request.put("/admin/category/Update",{
                 id:router.currentRoute.value.query.id,
                 title:form.title,
-                coverUrl:form.path
+                coverUrl:form.coverUrl || null
               })
               if(response.status === 200){
                 ElMessage.success("更新成功")
@@ -74,7 +83,7 @@ export default{
         router.back()
       }
 
-      return {form,rules,back,update,formRef}
+      return {form,rules,back,update,formRef,handleCoverUrl}
     }
     
 }
@@ -103,5 +112,12 @@ export default{
   box-shadow: var(--shadow-card);
   border: 1px solid rgba(0, 0, 0, 0.04);
   padding: 28px;
+}
+
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
 }
 </style>

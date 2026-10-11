@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Listening.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,10 +20,10 @@ namespace Listening.Infrastructure.Migrations
                     IsVisible = table.Column<bool>(type: "bit", nullable: false),
                     SequenceNumber = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletionTime = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2(0)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -40,9 +40,9 @@ namespace Listening.Infrastructure.Migrations
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CoverUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    CreateTime = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2(0)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -63,10 +63,10 @@ namespace Listening.Infrastructure.Migrations
                     DurationInSecond = table.Column<double>(type: "float", nullable: false),
                     Subtitle = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
                     SubtitleType = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-                    CreateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2(0)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletionTime = table.Column<DateTime>(type: "datetime2(0)", nullable: true)
                 },
                 constraints: table =>
                 {

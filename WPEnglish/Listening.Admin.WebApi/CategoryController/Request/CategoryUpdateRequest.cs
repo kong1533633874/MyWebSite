@@ -6,7 +6,7 @@ namespace Listening.Admin.WebApi.CategoryController.Request
 	{
 		public Guid Id { get; set; }
 		public string Title { get; set; }
-		public Uri CoverUrl { get; set; }
+		public Uri? CoverUrl { get; set; }
 	}
 
 	public class CategoryUpdateRequestValidator : AbstractValidator<CategoryUpdateRequest>
@@ -15,7 +15,7 @@ namespace Listening.Admin.WebApi.CategoryController.Request
 		{
 			RuleFor(s => s.Id).NotEmpty();
 			RuleFor(s => s.Title).NotEmpty().WithMessage("标题不能为空").NotNull().Length(1, 200);
-			RuleFor(s => s.CoverUrl).NotNull();
+			RuleFor(s => s.CoverUrl).Must(s => s == null || !s.IsAbsoluteUri).WithMessage("封面路径必须是相对路径");
 		}
 	}
 }

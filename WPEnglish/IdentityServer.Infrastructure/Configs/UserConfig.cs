@@ -7,7 +7,7 @@ using IdentityServer.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace IdentityServer.Infrastructure.config
+namespace IdentityServer.Infrastructure.Configs
 {
 	public class UserConfig : IEntityTypeConfiguration<User>
 	{

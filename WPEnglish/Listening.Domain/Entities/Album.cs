@@ -66,6 +66,5 @@ namespace Listening.Domain.Entities
 		{
 			this.LastModificationTime = DateTime.UtcNow;
 		}
-
 	}
 }

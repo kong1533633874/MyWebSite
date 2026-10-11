@@ -31,7 +31,7 @@ namespace IdentityServer.Infrastructure
 			{
 				var error = new IdentityError()
 				{
-					Code = "UserName Invalid",
+					Code = "400",
 					Description = "用户名已存在"
 				};
 				_logger.LogWarning("用户名{UserName}已存在",username);
@@ -60,8 +60,8 @@ namespace IdentityServer.Infrastructure
 
 		public async Task<IdentityResult> AddToRoleAsync(User user, string role)
 		{
-			var flag = await _roleManager.RoleExistsAsync(role);
-			if (!flag)
+			var isExisted = await _roleManager.RoleExistsAsync(role);
+			if (!isExisted)
 			{
 				IdentityError identityError = new IdentityError() { Description = $"不存在{role}管理权限" };
 				return IdentityResult.Failed(identityError);
@@ -75,7 +75,7 @@ namespace IdentityServer.Infrastructure
 			Role? role = await _roleManager.FindByNameAsync(roleName);
 			if (role!=null)
 			{
-				IdentityError identityError = new IdentityError() { Code = "roleName have existed", Description= $"权限名:{roleName}已经存在" };
+				IdentityError identityError = new IdentityError() { Code = "400", Description= $"权限名:{roleName}已经存在" };
 				return IdentityResult.Failed(identityError);
 			}
 			Role newRole = new Role { Name = roleName };
@@ -90,7 +90,7 @@ namespace IdentityServer.Infrastructure
 				_logger.LogWarning("修改密码失败：未找到用户 {UserId}", userId);
 				IdentityError identityError = new IdentityError()
 				{
-					Code = "UserId Invalid",
+					Code = "400",
 					Description = "未找到用户"
 				};
 				return IdentityResult.Failed(identityError);
@@ -100,7 +100,7 @@ namespace IdentityServer.Infrastructure
 				_logger.LogWarning("修改密码失败：密码长度不足 {UserId}", userId);
 				IdentityError identityError = new IdentityError() 
 				{ 
-					Code = "Password Invalid", 
+					Code = "400", 
 					Description = "密码长度不能少于6" 
 				};
 				return IdentityResult.Failed(identityError);
@@ -116,7 +116,6 @@ namespace IdentityServer.Infrastructure
 				_logger.LogWarning("用户 {UserName} 修改密码失败", user.UserName);
 			}
 			return result;
-
 		}
 
 		public async Task<SignInResult> CheckForSignInAsync(User user, string password, bool lockoutOnFailure)
@@ -155,7 +154,7 @@ namespace IdentityServer.Infrastructure
 				_logger.LogWarning("删除用户失败：未找到用户 {UserId}", userId);
 				IdentityError identityError = new IdentityError()
 				{
-					Code = "UserId Invalid",
+					Code = "400",
 					Description = "未找到用户"
 				};
 				return IdentityResult.Failed(identityError);
@@ -178,5 +177,19 @@ namespace IdentityServer.Infrastructure
 			return result;
 		}
 
+		public async Task<IdentityResult> RemoveRoleAsync(string roleName)
+		{
+			Role? role =  await _roleManager.FindByNameAsync(roleName);
+			if(role == null)
+			{
+				IdentityError identityError = new IdentityError()
+				{
+					Code = "400",
+					Description = "没有这个权限"
+				};
+				return IdentityResult.Failed(identityError);
+			}
+			return await _roleManager.DeleteAsync(role);
+		}
 	}
 }

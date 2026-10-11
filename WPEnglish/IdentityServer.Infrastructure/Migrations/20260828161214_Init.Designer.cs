@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityServer.Infrastructure.Migrations
 {
     [DbContext(typeof(IdDbContext))]
-    [Migration("20260628100112_changeUsernameIndex")]
-    partial class changeUsernameIndex
+    [Migration("20260828161214_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

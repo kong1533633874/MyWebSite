@@ -59,7 +59,7 @@ namespace IdentitServer.WebApi.Controllers
 			var result = await _repository.AddUserAsync(addUserRequest.UserName, addUserRequest.Password);
 			if (!result.Succeeded)
 			{
-				var errors = result.Errors.Select(s => $"code:{"发生错误"}, message:{s.Description}");
+				var errors = result.Errors.Select(s => $"code:{s.Code}, message:{s.Description}");
 				string msg = string.Join("\n", errors);
 				return BadRequest(msg);
 			}

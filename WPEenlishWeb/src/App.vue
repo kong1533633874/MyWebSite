@@ -27,28 +27,76 @@
 <script setup lang="js">
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { SwitchButton } from '@element-plus/icons-vue'; // 可选图标
-import { provide, reactive } from 'vue';
+import { onBeforeUnmount, onMounted, provide, reactive } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 import { useRouter } from 'vue-router';
 import ConfirmBox from './utils/ConfirmBox';
 import SiteFooter from './components/SiteFooter.vue';
+import { clearToken, getToken, getTokenRemainingMs, isTokenExpired } from './utils/auth';
 
 const router = useRouter()
 
 const loginState  = reactive({
-  isLoggedIn: !!localStorage.getItem('token')
+  isLoggedIn: !!getToken() && !isTokenExpired()
 })
+
+let expiryTimer = null
 
 function setLoginStatus(loginedIn = true){
   loginState.isLoggedIn = loginedIn
+  if (loginedIn) {
+    scheduleExpiryCheck()
+  } else if (expiryTimer) {
+    clearTimeout(expiryTimer)
+    expiryTimer = null
+  }
 }
+
+function handleSessionExpired(){
+  clearToken()
+  setLoginStatus(false)
+  if (router.currentRoute.value.path !== '/login') {
+    ElMessage.warning('登录已过期，请重新登录')
+    router.replace('/login')
+  }
+}
+
+function scheduleExpiryCheck(){
+  if (expiryTimer) {
+    clearTimeout(expiryTimer)
+    expiryTimer = null
+  }
+  const token = getToken()
+  if (!token) return
+  if (isTokenExpired(token)) {
+    handleSessionExpired()
+    return
+  }
+  const remaining = getTokenRemainingMs(token)
+  const delay = Math.min(Math.max(remaining, 0), 2147483647)
+  expiryTimer = setTimeout(() => {
+    if (isTokenExpired()) {
+      handleSessionExpired()
+    } else {
+      scheduleExpiryCheck()
+    }
+  }, delay)
+}
+
+onMounted(scheduleExpiryCheck)
+onBeforeUnmount(() => {
+  if (expiryTimer) {
+    clearTimeout(expiryTimer)
+    expiryTimer = null
+  }
+})
 
 async function logout(){
   const confirm = await ConfirmBox("是否退出当前账号")
   if(!confirm) return
   
-  if(localStorage.getItem("token")){
-    localStorage.setItem("token",'')
+  if(getToken()){
+    clearToken()
     setLoginStatus(false)
     ElMessage.success("账号已登出")
     router.push("/login")

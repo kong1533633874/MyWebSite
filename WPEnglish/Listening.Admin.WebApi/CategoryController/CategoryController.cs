@@ -70,7 +70,7 @@ namespace Listening.Admin.WebApi.CategoryController
 			{
 				var errors = string.Join("; ", result.Errors.Select(s => s.ErrorMessage));
 				return BadRequest(errors);
-			}
+	 		}
 			var domainResult = await listeningService.UpdateCategoryAsync(categoryUpdateRequest.Id, categoryUpdateRequest.Title, categoryUpdateRequest.CoverUrl);
 			if (!domainResult.Success)
 			{

@@ -3,13 +3,7 @@ using JWT;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityServer.Domain.Service
 {
@@ -69,7 +63,6 @@ namespace IdentityServer.Domain.Service
 				_logger.LogWarning("用户 {UserName} 登录失败：密码错误", userName);
 				return (checkResult, null);
 			}
-			
 		}
 	}
 }

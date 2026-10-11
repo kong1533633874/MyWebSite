@@ -48,14 +48,16 @@ namespace FileService.Controllers
 		{
 			string fileName = file.FileName;
 			Stream stream = file.OpenReadStream();
-			var audiofile = await fSDomainService.UploadAsync(fileName,stream);
+			var (audiofile,isExisted) = await fSDomainService.UploadAsync(fileName,stream);
 
-			AudioFile? oldfile = await fSRepository.FindFileAsync(audiofile.FileSize ,audiofile.FileSHA256Hash);
-			if (oldfile == null)
+			if (!isExisted)
 			{
 				fSDbContext.AudioFiles.Add(audiofile);
 				await fSDbContext.SaveChangesAsync();
-				logger.LogInformation("音频文件入库成功：{FileName}，大小：{FileSize}", fileName, audiofile.FileSize);
+				string message = "";
+				if (fileName.EndsWith("jpg")) message = "封面图片文件入库成功";
+				else message = "音频文件入库成功";
+				logger.LogInformation("{Message}：{FileName}，大小：{FileSize}", message, fileName, audiofile.FileSize);
 			}
 			return audiofile.Url;
 		}

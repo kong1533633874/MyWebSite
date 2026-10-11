@@ -1,18 +1,18 @@
 
+using CommonInitializer;
+using Commons.Filters;
+using Commons.JsonConverters;
+using Commons.Middlewares;
+using FluentValidation;
+using JWT;
+using Listening.Admin.WebApi.CategoryController.Request;
 using Listening.Domain.Service;
 using Listening.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using FluentValidation;
-using Listening.Admin.WebApi.CategoryController.Request;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using JWT;
-using CommonInitializer;
-using Commons.Middlewares;
-using Commons.Filters;
 using Serilog;
-using Commons.JsonConverters;
+using System.Text;
 
 namespace Listening.Admin.WebApi
 {

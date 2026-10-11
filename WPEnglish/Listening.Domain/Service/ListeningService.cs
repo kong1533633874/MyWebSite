@@ -2,6 +2,7 @@
 using DomainCommons;
 using Listening.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using System.Reflection.Metadata;
 
 namespace Listening.Domain.Service
 {
@@ -10,24 +11,24 @@ namespace Listening.Domain.Service
 		private readonly IListeningRepository repository;
 		private readonly ILogger<ListeningService> logger;
 
-		public ListeningService(IListeningRepository repository, ILogger<ListeningService> logger)
+		public ListeningService(IListeningRepository repository, 
+			ILogger<ListeningService> logger
+			)
 		{
 			this.repository = repository;
 			this.logger = logger;
 		}
 
-		public async Task<DomainResult<Category>> AddCategoryAsync(string title,Uri url)
+		public async Task<DomainResult<Category>> AddCategoryAsync(string title, Uri? coverUrl)
 		{
-			DomainResult<Category> result = new DomainResult<Category>();
-
+			
 			int seq = await repository.GetMaxSequenceNumberAsync();
-			var category = Category.Create(seq + 1, title, url);
+			var category = Category.Create(seq + 1, title, coverUrl);
 			if (category == null)
 			{
 				return DomainResult<Category>.Fail("创建分类失败", 500);
 			}
 			return DomainResult<Category>.Ok(category);
-
 		}
 
 		public async Task<DomainResult<Category>> DeleteCategoryAsync(Guid id)
@@ -41,7 +42,7 @@ namespace Listening.Domain.Service
 			return DomainResult<Category>.Ok(category);
 		}
 
-		public async Task<DomainResult<Category>> UpdateCategoryAsync(Guid id, string title, Uri coverUrl)
+		public async Task<DomainResult<Category>> UpdateCategoryAsync(Guid id, string title, Uri? coverUrl)
 		{
 			var category = await repository.GetCategoryByIdAsync(id);
 			if (category == null)
@@ -51,7 +52,12 @@ namespace Listening.Domain.Service
 					Success = false, Message = $"未找到Id:{id}的Category" ,StatusCode = 400 
 				};
 			}
-			category.ChangeTitle(title).ChangeCoverUrl(coverUrl).NotifyModified();
+			category.ChangeTitle(title);
+			if (coverUrl != null)
+			{
+				category.ChangeCoverUrl(coverUrl);
+			}
+			category.NotifyModified();
 			return new DomainResult<Category>
 			{
 				Success = true,

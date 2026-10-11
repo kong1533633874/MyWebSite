@@ -1,4 +1,5 @@
 import { createRouter,createWebHistory } from "vue-router";
+import { clearToken, isTokenExpired } from "@/utils/auth";
 
 import CategoryList from '../Views/CategoryList.vue'
 import CategoryAdd  from '../Views/CategoryAdd.vue'
@@ -135,12 +136,10 @@ const router = createRouter({
     routes:paths
 })
 
-router.beforeEach((to,from) =>{
-    if(to.meta.requiresAuth){
-        const token = localStorage.getItem("token")
-        if(!token){
-            return "/login"
-        }
+router.beforeEach((to) =>{
+    if(to.meta.requiresAuth && isTokenExpired()){
+        clearToken()
+        return "/login"
     }
 })
 

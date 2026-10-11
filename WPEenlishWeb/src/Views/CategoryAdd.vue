@@ -8,8 +8,11 @@
         <el-form-item label="标题" prop="name">
           <el-input v-model="form.name" placeholder="请输入分类标题" />
         </el-form-item>
-        <el-form-item label="封面URL" prop="path">
-          <el-input v-model="form.path" placeholder="请输入图片路径" />
+        <el-form-item label="封面" prop="coverUrl">
+          <div class="upload-row">
+            <el-input v-model="form.coverUrl" disabled placeholder="上传后自动填充" />
+            <ImageUploader @custom-event="handleCoverUrl" />
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="add">提交</el-button>
@@ -26,17 +29,24 @@ import {useRouter} from 'vue-router'
 import { reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import ConfirmBox from '@/utils/ConfirmBox';
+import ImageUploader from '@/components/ImageUploader.vue';
+
 export default{
+  components:{ImageUploader},
 	setup(){
     const form = reactive({
       name:'',
-      path:''
+      coverUrl:''
     })
 		const router = useRouter()
     const formRef = ref()
 
     const rules = {
     name:[{required:true, message:"必须填写标题", trigger:"blur"}]
+    }
+
+    function handleCoverUrl(url){
+      form.coverUrl = url
     }
 
 		async function add(){
@@ -48,11 +58,11 @@ export default{
             try{
                 const response = await request.post("/admin/category/Add",{
                   title:form.name,
-                  coverUrl:form.path
+                  coverUrl:form.coverUrl || null
                 })
                 if(response.status === 200){
                   form.name =''
-                  form.path =''
+                  form.coverUrl =''
                   ElMessage.success("添加成功")
                   back()
                 }
@@ -70,7 +80,7 @@ export default{
 		function back(){
 			router.back()
 		}
-		return {form,rules,add,back,formRef}
+		return {form,rules,add,back,formRef,handleCoverUrl}
 	}
 }
 </script>
@@ -98,5 +108,12 @@ export default{
   box-shadow: var(--shadow-card);
   border: 1px solid rgba(0, 0, 0, 0.04);
   padding: 28px;
+}
+
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
 }
 </style>
